@@ -20,12 +20,16 @@
     var startbutton = null;
 
     var array_of_images = [];
+    var prediction_loop = false;
+    var stopbutton = null;
 
     function startup() {
         video = document.getElementById('video');
         canvas = document.getElementById('canvas');
         photo = document.getElementById('photo');
         startbutton = document.getElementById('startbutton');
+
+        stopbutton = document.getElementById('stopbutton');
 
         navigator.mediaDevices.getUserMedia({ audio: false, video: true })
         .then(stream => {
@@ -56,7 +60,14 @@
         }, false);
 
         startbutton.addEventListener('click', function (ev) {
-            takepicture();
+            //takepicture();
+            prediction_loop = true;
+            keepRunningPrediction();
+            ev.preventDefault();
+        }, false);
+
+        stopbutton.addEventListener('click', function (ev) {            
+            prediction_loop = false;            
             ev.preventDefault();
         }, false);
 
@@ -95,9 +106,24 @@
         }
 
         array_of_images.push(data);
-        console.log(array_of_images);
-        console.log(array_of_images[0]);
+        //console.log(array_of_images);
+        //console.log(array_of_images[0]);
+        console.log(array_of_images.length);
     }
+
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+      }
+
+    async function keepRunningPrediction(){
+        console.log('looping');
+        while (prediction_loop) {            
+            takepicture();
+            await sleep(1000);
+        }
+
+    }
+
     // Set up our event listener to run the startup process
     // once loading is complete.
     window.addEventListener('load', startup, false);
