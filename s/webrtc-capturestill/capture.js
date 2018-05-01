@@ -3,6 +3,8 @@
     // width to the value defined here, but the height will be
     // calculated based on the aspect ratio of the input stream.
 
+    var zip = new JSZip()
+
     var width = 320;    // We will scale the photo width to this
     var height = 0;     // This will be computed based on the input stream
 
@@ -19,9 +21,13 @@
     var photo = null;
     var startbutton = null;
 
+    // Fryan
     var array_of_images = [];
     var prediction_loop = false;
     var stopbutton = null;
+
+    var downloadbutton = null;
+
 
     function startup() {
         video = document.getElementById('video');
@@ -30,6 +36,7 @@
         startbutton = document.getElementById('startbutton');
 
         stopbutton = document.getElementById('stopbutton');
+        downloadbutton = document.getElementById('downloadbutton');
 
         navigator.mediaDevices.getUserMedia({ audio: false, video: true })
         .then(stream => {
@@ -71,6 +78,12 @@
             ev.preventDefault();
         }, false);
 
+        downloadbutton.addEventListener('click', function (ev) {
+            console.log("clicked download");          
+            zip_it_up();
+            ev.preventDefault();
+        }, false);
+
         clearphoto();
     }
 
@@ -105,7 +118,8 @@
             clearphoto();
         }
 
-        array_of_images.push(data);
+        let basePic = data.replace(/^data:image\/(png|jpg);base64,/, "");
+        array_of_images.push(basePic);
         //console.log(array_of_images);
         //console.log(array_of_images[0]);
         console.log(array_of_images.length);
@@ -122,6 +136,24 @@
             await sleep(1000);
         }
 
+    }
+
+    function zip_it_up(){
+        console.log("Download");
+
+        // Generate a directory within the Zip file structure
+        var img = zip.folder("images");
+        // Add a file to the directory, in this case an image with data URI as contents
+        img.file("smile.png", array_of_images[1], {base64: true});
+
+        console.log(zip);
+        console.log(img);
+
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // Force down of the Zip file
+            saveAs(content, "archive.zip");
+        });
     }
 
     // Set up our event listener to run the startup process

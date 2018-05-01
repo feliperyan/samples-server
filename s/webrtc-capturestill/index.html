@@ -4,8 +4,11 @@
 	<title>WebRTC: Still photo capture demo</title>
 	<meta charset='utf-8'>
 	<link rel="stylesheet" href="main.css" type="text/css" media="all">
-	<script src="capture.js">
-	</script>
+	
+	<script src="FileSaver.js"></script>
+	<script src="jszip.js"></script>
+	<script src="capture.js"></script>
+
 </head>
 <body>
 <div class="contentarea">
@@ -17,9 +20,13 @@
 	</p>
   <div class="camera">
     <video id="video">Video stream not available.</video>
+		
 		<button id="startbutton">Take photos</button>
 		<button id="stopbutton">stop</button> 
-  </div>
+		<button id="downloadbutton">Download</button> 
+
+	</div>
+
   <canvas id="canvas">
   </canvas>
   <div class="output">
